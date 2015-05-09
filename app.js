@@ -8,6 +8,31 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/jwt_test');
+    //take a look here to figure out how to handle mongoose connection:
+    //http://theholmesoffice.com/mongoose-connection-best-practice/
+    mongoose.connection.on('error',function(err){
+        if(err)
+            console.log(err);
+    });
+    mongoose.connection.on('connected',function(){
+        console.log('connection established');
+    });
+
+    mongoose.connection.on('disconnected',function(){
+        console.log('Disconnected from mongo db');
+    });
+
+    mongoose.connection.on('SIGINT',function(){
+        //sigint represents the termination of the app
+        mongoose.connection.close(function(){
+            console.log("Connection to mongo db has been closed because the app terminated");
+            process.exit(0);
+        });
+    });
+
 var app = express();
 
 // view engine setup
